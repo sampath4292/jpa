@@ -74,10 +74,9 @@ public class Main {
         
         Product Product_1 =
                 new Product(
-                        200,"p1",100
+                        50,"p1",100
                 );
                 em.persist(Product_1);
-                int x = 10 / 0;
         tx.commit();
               
         em.close();
