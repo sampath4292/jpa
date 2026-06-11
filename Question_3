@@ -1,0 +1,84 @@
+package com.sampath.jpa;
+
+import javax.persistence.*;
+// import com.sampath.jpa.entity.Course;
+
+//3. Create an entity to represent a course which Contains id auto generated, title, course fee and location. Location contains institute name, address & city.
+@Entity
+@Table(name = "course")
+class Course {
+
+    @Id
+    @Column(name = "course_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "price")
+    private int price;
+
+    @Embedded
+    private Location location;
+
+    public Course() {
+    }
+
+    public Course(String name, int price,Location location) {
+        this.title = name;
+        this.price = price;
+        this.location=location;
+    }
+}
+@Embeddable
+class Location
+{
+        private String instituteName;
+
+        private String address;
+
+        private String city;
+
+        public Location() { }
+
+        public Location(String i_name,String add,String city)
+        {
+                this.instituteName=i_name;
+                this.address=add;
+                this.city=city;
+        }
+}
+public class Main {
+
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf =
+                Persistence.createEntityManagerFactory("jpa-unit");
+
+        EntityManager em =
+                emf.createEntityManager();
+        EntityTransaction tx =em.getTransaction();
+        
+        Location l=new Location("vi", "duv", "vtz");
+
+        Course Course =new Course("ai", 2500, l);
+        try {
+                tx.begin();
+
+        em.persist(Course);
+
+        tx.commit();
+              
+        em.close();
+        emf.close();
+                
+        } catch (Exception e) {
+                e.printStackTrace();
+                tx.rollback();
+        }
+        
+
+    }
+}
