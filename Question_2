@@ -1,0 +1,92 @@
+package com.sampath.jpa;
+
+import javax.persistence.*;
+// import com.sampath.jpa.entity.Product;
+
+
+@Entity
+@Table(name = "product")
+class Product {
+
+    @Id
+    @Column(name = "pro_id")
+    private int id;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "price")
+    private int price;
+
+    public Product() {
+    }
+
+    public Product(int pro_id, String name, int price) {
+        this.id = pro_id;
+        this.name = name;
+        this.price = price;
+    }
+
+    public int getid() {
+        return id;
+    }
+
+    public void setCustEId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price= price;
+    }
+}
+public class Main {
+
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf =
+                Persistence.createEntityManagerFactory("jpa-unit");
+
+        EntityManager em =
+                emf.createEntityManager();
+        EntityTransaction tx =em.getTransaction();
+
+        Product Product =
+                new Product(
+                        50,"p1",100
+                );
+        try {
+                tx.begin();
+
+        em.persist(Product);
+        
+        Product Product_1 =
+                new Product(
+                        200,"p1",100
+                );
+                em.persist(Product_1);
+                int x = 10 / 0;
+        tx.commit();
+              
+        em.close();
+        emf.close();
+                
+        } catch (Exception e) {
+                tx.rollback();
+        }
+        
+
+    }
+}
