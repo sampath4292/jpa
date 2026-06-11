@@ -1,0 +1,63 @@
+package com.sampath.jpa;
+
+import javax.persistence.*;
+// import com.sampath.jpa.entity.Customer;
+
+
+@Entity
+@Table(name = "customer")
+class Customer {
+
+    @Id
+    private int id;
+
+    private String name;
+
+    public Customer() {
+    }
+
+    public Customer(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+public class Main {
+
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf =
+                Persistence.createEntityManagerFactory("jpa-unit");
+
+        EntityManager em =
+                emf.createEntityManager();
+
+        Customer emp =
+                new Customer(1, "Sampath");
+
+        em.getTransaction().begin();
+
+        em.persist(emp);
+
+        em.getTransaction().commit();
+
+        em.close();
+        emf.close();
+    }
+}
