@@ -9,24 +9,30 @@ import javax.persistence.*;
 class Customer {
 
     @Id
-    private int id;
+    @Column(name = "cust_email")
+    private String custEmail;
 
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "mobile_no")
+    private String mobileNo;
 
     public Customer() {
     }
 
-    public Customer(int id, String name) {
-        this.id = id;
+    public Customer(String custEmail, String name, String mobileNo) {
+        this.custEmail = custEmail;
         this.name = name;
+        this.mobileNo = mobileNo;
     }
 
-    public int getId() {
-        return id;
+    public String getCustEmail() {
+        return custEmail;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCustEmail(String custEmail) {
+        this.custEmail = custEmail;
     }
 
     public String getName() {
@@ -35,6 +41,14 @@ class Customer {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getMobileNo() {
+        return mobileNo;
+    }
+
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
     }
 }
 public class Main {
@@ -48,16 +62,21 @@ public class Main {
         EntityManager em =
                 emf.createEntityManager();
 
-        Customer emp =
-                new Customer(1, "Sampath");
+        Customer customer =
+                new Customer(
+                        "sampath@gmail.com",
+                        "Sampath",
+                        "9876543210"
+                );
 
         em.getTransaction().begin();
 
-        em.persist(emp);
+        em.persist(customer);
 
         em.getTransaction().commit();
 
         em.close();
         emf.close();
+
     }
 }
