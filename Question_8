@@ -1,0 +1,126 @@
+package com.sampath.jpa;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.*;
+
+
+@Entity
+@Table(name = "orders")
+class Orders {
+
+    @Id
+    @Column(name = "order_id")
+    private int orderId;
+
+    @Column(name = "customer_name")
+    private String customerName;
+
+    @ManyToMany
+    @JoinTable(
+        name = "order_product",
+        joinColumns = @JoinColumn(name = "order_id"),
+        inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<Product> products;
+
+    public Orders() {
+    }
+
+    public Orders(int orderId, String customerName) {
+        this.orderId = orderId;
+        this.customerName = customerName;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+}
+
+@Entity
+@Table(name = "product")
+class Product {
+
+    @Id
+    @Column(name = "product_id")
+    private int productId;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "price")
+    private int price;
+
+    @ManyToMany(mappedBy = "products")
+    private List<Orders> orders;
+
+    public Product() {
+    }
+
+    public Product(int productId, String name, int price) {
+        this.productId = productId;
+        this.name = name;
+        this.price = price;
+    }
+
+    public void setOrders(List<Orders> orders) {
+        this.orders = orders;
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf =
+                Persistence.createEntityManagerFactory("jpa-unit");
+
+        EntityManager em =
+                emf.createEntityManager();
+
+        EntityTransaction tx =
+                em.getTransaction();
+
+        Orders order =
+                new Orders(1, "Sampath");
+
+        Product p1 =
+                new Product(101, "Laptop", 50000);
+
+        Product p2 =
+                new Product(102, "Mouse", 500);
+
+        List<Product> products =
+                new ArrayList<>();
+
+        products.add(p1);
+        products.add(p2);
+
+        order.setProducts(products);
+
+        try {
+
+            tx.begin();
+
+            em.persist(p1);
+            em.persist(p2);
+
+            em.persist(order);
+
+            tx.commit();
+
+            System.out.println("Inserted Successfully");
+
+        } catch (Exception e) {
+
+            tx.rollback();
+            e.printStackTrace();
+
+        } finally {
+
+            em.close();
+            emf.close();
+        }
+    }
+}
