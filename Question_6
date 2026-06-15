@@ -1,0 +1,237 @@
+package com.sampath.jpa;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.*;
+
+
+//bidirectional
+@Entity
+@Table(name = "product")
+class Product {
+
+    @Id
+    @Column(name = "pro_id")
+    private int id;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "price")
+    private int price;
+
+    @OneToMany(mappedBy = "product")
+    private List<Sales> sales;
+
+    public Product() {
+    }
+
+    public Product(int id, String name, int price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
+    public void setSales(List<Sales> sales) {
+        this.sales = sales;
+    }
+}
+
+@Entity
+@Table(name = "sales")
+class Sales {
+
+    @Id
+    @Column(name = "sale_id")
+    private int saleId;
+
+    @Column(name = "quantity")
+    private int quantity;
+    @ManyToOne
+    @JoinColumn(name="product_id")
+    private Product product;
+
+    public void setProduct(Product product) {
+        this.product = product;
+    } 
+
+    public Sales() {
+    }
+
+    public Sales(int saleId, int quantity) {
+        this.saleId = saleId;
+        this.quantity = quantity;
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf =
+                Persistence.createEntityManagerFactory("jpa-unit");
+
+        EntityManager em =
+                emf.createEntityManager();
+
+        EntityTransaction tx =
+                em.getTransaction();
+
+        Product product =
+                new Product(100, "Laptop", 50000);
+
+        Sales sale1 =
+                new Sales(101, 2);
+
+        Sales sale2 =
+                new Sales(102, 3);
+
+        List<Sales> salesList =
+                new ArrayList<>();
+
+        salesList.add(sale1);
+        salesList.add(sale2);
+
+        product.setSales(salesList);
+
+        try {
+
+            tx.begin();
+
+            em.persist(sale1);
+            em.persist(sale2);
+
+            em.persist(product);
+
+            tx.commit();
+
+            System.out.println("Data Inserted");
+
+        } catch (Exception e) {
+
+            tx.rollback();
+            e.printStackTrace();
+
+        } finally {
+
+            em.close();
+            emf.close();
+        }
+    }
+}
+
+
+
+
+
+
+
+// uni -directional 
+// @Entity
+// @Table(name = "product")
+// class Product {
+
+//     @Id
+//     @Column(name = "pro_id")
+//     private int id;
+
+//     @Column(name = "name")
+//     private String name;
+
+//     @Column(name = "price")
+//     private int price;
+
+//     @OneToMany
+//     @JoinColumn(name = "product_id")
+//     private List<Sales> sales;
+
+//     public Product() {
+//     }
+
+//     public Product(int id, String name, int price) {
+//         this.id = id;
+//         this.name = name;
+//         this.price = price;
+//     }
+
+//     public void setSales(List<Sales> sales) {
+//         this.sales = sales;
+//     }
+// }
+
+// @Entity
+// @Table(name = "sales")
+// class Sales {
+
+//     @Id
+//     @Column(name = "sale_id")
+//     private int saleId;
+
+//     @Column(name = "quantity")
+//     private int quantity;
+
+//     public Sales() {
+//     }
+
+//     public Sales(int saleId, int quantity) {
+//         this.saleId = saleId;
+//         this.quantity = quantity;
+//     }
+// }
+
+// public class Main {
+
+//     public static void main(String[] args) {
+
+//         EntityManagerFactory emf =
+//                 Persistence.createEntityManagerFactory("jpa-unit");
+
+//         EntityManager em =
+//                 emf.createEntityManager();
+
+//         EntityTransaction tx =
+//                 em.getTransaction();
+
+//         Product product =
+//                 new Product(100, "Laptop", 50000);
+
+//         Sales sale1 =
+//                 new Sales(101, 2);
+
+//         Sales sale2 =
+//                 new Sales(102, 3);
+
+//         List<Sales> salesList =
+//                 new ArrayList<>();
+
+//         salesList.add(sale1);
+//         salesList.add(sale2);
+
+//         product.setSales(salesList);
+
+//         try {
+
+//             tx.begin();
+
+//             em.persist(sale1);
+//             em.persist(sale2);
+
+//             em.persist(product);
+
+//             tx.commit();
+
+//             System.out.println("Data Inserted");
+
+//         } catch (Exception e) {
+
+//             tx.rollback();
+//             e.printStackTrace();
+
+//         } finally {
+
+//             em.close();
+//             emf.close();
+//         }
+//     }
+// }
