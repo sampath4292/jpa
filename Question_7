@@ -1,0 +1,83 @@
+package com.sampath.jpa;
+
+import javax.persistence.*;
+// import com.sampath.jpa.entity.employee;
+
+//3. Create an entity to represent a employee which Contains id auto generated, title, employee fee and location. Location contains institute name, address & city.
+@Entity
+@Table(name = "employee")
+class Employee {
+
+    @Id
+    @Column(name = "employee_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    
+    @Column(name = "name")
+    private String name;
+
+    @OneToOne(mappedBy = "employee")
+        private Lib lib;
+    
+    public Employee() {
+    }
+
+    public Employee(String name) {
+        this.name = name;
+    }public void setLib(Lib lib) {
+    this.lib = lib;
+}
+
+}
+@Entity
+class Lib {
+
+    @Id
+    @Column(name = "store_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    
+    @Column(name = "Type")
+    private String type;
+
+    @OneToOne
+     @JoinColumn(name="employee_id")
+     private Employee employee;
+
+     public Lib(){}
+     public Lib(String type)
+     {
+        this.type=type;
+     }
+     public void setEmployee(Employee emp)
+     {
+        this.employee=emp;
+     }
+}
+public class Main {
+
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf =
+                Persistence.createEntityManagerFactory("jpa-unit");
+
+        EntityManager em =
+                emf.createEntityManager();
+        EntityTransaction tx =em.getTransaction();
+        
+
+        Employee employee =new Employee("alice");
+        Lib lib=new Lib("type 1");
+        tx.begin();
+        lib.setEmployee(employee);
+        employee.setLib(lib);
+        em.persist(employee);
+        em.persist(lib);
+        tx.commit();
+        em.close();
+        emf.close();
+        
+
+    }
+}
