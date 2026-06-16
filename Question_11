@@ -1,0 +1,127 @@
+package com.sampath.jpa;
+
+import javax.persistence.*;
+
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+class Course {
+
+    @Id
+    private int id;
+
+    private String title;
+
+    private double fee;
+
+    public Course() {
+    }
+
+    public Course(int id, String title, double fee) {
+        this.id = id;
+        this.title = title;
+        this.fee = fee;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public double getFee() {
+        return fee;
+    }
+}
+
+@Entity
+class OnlineCourse extends Course {
+
+    private String platform;
+
+    public OnlineCourse() {
+    }
+
+    public OnlineCourse(
+            int id,
+            String title,
+            double fee,
+            String platform) {
+
+        super(id, title, fee);
+        this.platform = platform;
+    }
+}
+
+@Entity
+class OfflineCourse extends Course {
+
+    private String classroom;
+
+    public OfflineCourse() {
+    }
+
+    public OfflineCourse(
+            int id,
+            String title,
+            double fee,
+            String classroom) {
+
+        super(id, title, fee);
+        this.classroom = classroom;
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf =
+                Persistence.createEntityManagerFactory("jpa-unit");
+
+        EntityManager em =
+                emf.createEntityManager();
+
+        EntityTransaction tx =
+                em.getTransaction();
+
+        OnlineCourse online =
+                new OnlineCourse(
+                        1,
+                        "Spring Boot",
+                        7000,
+                        "Udemy"
+                );
+
+        OfflineCourse offline =
+                new OfflineCourse(
+                        2,
+                        "Java",
+                        5000,
+                        "Room A"
+                );
+
+        try {
+
+            tx.begin();
+
+            em.persist(online);
+            em.persist(offline);
+
+            tx.commit();
+
+            System.out.println("Data Inserted");
+
+        } catch (Exception e) {
+
+            tx.rollback();
+            e.printStackTrace();
+
+        } finally {
+
+            em.close();
+            emf.close();
+        }
+    }
+}
