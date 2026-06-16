@@ -1,0 +1,122 @@
+package com.sampath.jpa;
+
+import javax.persistence.*;
+
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+class Course {
+
+    @Id
+    private int id;
+
+    private String title;
+
+    private double fee;
+
+    public Course() {
+    }
+
+    public Course(int id, String title, double fee) {
+        this.id = id;
+        this.title = title;
+        this.fee = fee;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public double getFee() {
+        return fee;
+    }
+}
+
+@Entity
+class OfflineCourse extends Course {
+
+    private String classroom;
+
+    public OfflineCourse() {
+    }
+
+    public OfflineCourse(
+            int id,
+            String title,
+            double fee,
+            String classroom) {
+
+        super(id, title, fee);
+        this.classroom = classroom;
+    }
+
+    @Override
+    public String toString() {
+
+        return "OfflineCourse{" +
+                "classroom='" + classroom + '\'' +
+                ", id=" + getId() +
+                ", title='" + getTitle() + '\'' +
+                ", fee=" + getFee() +
+                '}';
+    }
+}
+
+@Entity
+class OnlineCourse extends Course {
+
+    private String platform;
+
+    public OnlineCourse() {
+    }
+
+    public OnlineCourse(
+            int id,
+            String title,
+            double fee,
+            String platform) {
+
+        super(id, title, fee);
+        this.platform = platform;
+    }
+
+    @Override
+    public String toString() {
+
+        return "OnlineCourse{" +
+                "platform='" + platform + '\'' +
+                ", id=" + getId() +
+                ", title='" + getTitle() + '\'' +
+                ", fee=" + getFee() +
+                '}';
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        OfflineCourse offline =
+                new OfflineCourse(
+                        1,
+                        "Java",
+                        5000,
+                        "Room A"
+                );
+
+        OnlineCourse online =
+                new OnlineCourse(
+                        2,
+                        "Spring Boot",
+                        7000,
+                        "Udemy"
+                );
+
+        System.out.println(offline);
+
+        System.out.println(online);
+    }
+}
